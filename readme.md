@@ -1,6 +1,38 @@
 # Backend dev technical test
 
-## Empieza por la galería navegable
+## Arranque rápido
+
+Requisitos: **Docker, Compose >= 2.24 y curl**. No necesitas instalar Java ni
+Maven: la imagen compila la aplicación y ejecuta las pruebas automáticamente.
+La primera construcción descarga imágenes y dependencias.
+
+```sh
+git clone https://github.com/KitotsuMolina/backendDevTest.git
+cd backendDevTest
+docker compose -p nunegal -f docker-compose.yaml -f compose.app.yaml up -d --build app influxdb grafana
+curl --fail --retry 30 --retry-connrefused --retry-delay 1 --max-time 2 --retry-max-time 60 http://localhost:5000/actuator/health
+curl -i http://localhost:5000/product/1/similar
+```
+
+La última petición debe devolver **HTTP 200** y los productos con IDs
+**`2`, `3`, `4`**, en ese orden. Si ya tienes el repositorio, ejecuta los comandos
+a partir de `docker compose` desde su raíz.
+
+> **Decisión de diseño: si falla el detalle de un producto similar, se omite y se devuelven los demás; el contrato no define expresamente los resultados parciales.**
+
+Para ejecutar el test de carga original:
+
+```sh
+docker compose -p nunegal -f docker-compose.yaml -f compose.app.yaml run --rm k6 run scripts/test.js
+```
+
+Para detener los servicios:
+
+```sh
+docker compose -p nunegal -f docker-compose.yaml -f compose.app.yaml down
+```
+
+## Explora la galería navegable
 
 > **[Abrir la galería visual de la solución →](docs/diagrams/index.html)**
 >
