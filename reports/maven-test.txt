@@ -1,0 +1,7 @@
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.809 s -- in com.nunegal.similar.SimilarProductsServiceTest
+[INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.388 s -- in com.nunegal.similar.SimilarProductsIntegrationTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.521 s -- in com.nunegal.similar.ProductApiClientTest
+[INFO] Tests run: 32, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+[INFO] Total time:  9.684 s
+[INFO] Finished at: 2026-09-29T09:44:59Z

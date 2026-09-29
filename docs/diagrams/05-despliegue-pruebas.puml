@@ -1,0 +1,48 @@
+@startuml
+!include style.puml
+title Ejecución local y verificación de la solución
+left to right direction
+actor "Evaluador" as user
+node "Host local" {
+  artifact "Código + pom.xml\nDockerfile\nVariables de entorno" as source
+  node "Contenedor Maven / Java 21" as build {
+    component "mvn test / package\n32 pruebas" as tests
+    component "Servidor HTTP simulado\nPuertos aleatorios de prueba" as stub
+    tests --> stub : Integración real por HTTP
+  }
+  frame "Red Docker Compose · nunegal_default" {
+    node "app · Java 21\nUsuario sin privilegios" as app {
+      component "Spring Boot :5000\n/product/{id}/similar\n/actuator/health" as boot
+    }
+    node "simulado :80\nMocks originales" as mocks
+    node "k6\nOriginal + verificaciones adicionales" as k6
+    database "InfluxDB :8086\nMétricas del generador k6" as influx
+    node "Grafana :3000" as grafana
+    boot --> mocks : PRODUCTS_BASE_URL\nhttp://simulado:80
+    k6 --> boot : http://host.docker.internal:5000\nAlias de app en la red interna
+    k6 --> influx : Resultados de carga
+    grafana --> influx : Consultar métricas
+  }
+}
+source --> tests : Construcción reproducible
+tests ..> app : JAR verificado / imagen de runtime
+user --> boot : localhost:5000
+user --> grafana : localhost:3000
+note bottom of tests
+  6 casos unitarios del servicio.
+  24 casos de integración de la aplicación.
+  2 casos HTTP del cliente.
+  No dependen de los mocks originales.
+end note
+note bottom of k6
+  El original se conserva sin cambios.
+  El adicional comprueba estado, contenido,
+  orden y umbrales por escenario.
+end note
+note bottom of app
+  La salud no consulta simulado.
+  Sin base de datos de negocio ni caché.
+  InfluxDB pertenece a la evaluación,
+  no al almacenamiento de productos.
+end note
+@enduml

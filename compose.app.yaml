@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      PRODUCTS_BASE_URL: http://simulado:80
+      PRODUCTS_MAX_CONNECTIONS: ${PRODUCTS_MAX_CONNECTIONS:-800}
+    depends_on:
+      - simulado
+    networks:
+      default:
+        aliases:
+          - host.docker.internal
+  k6:
+    # Resolve the original test hostname directly to the app on this network.
+    # Requires Compose >= 2.24; avoids host-gateway/firewall differences on Linux.
+    extra_hosts: !reset []

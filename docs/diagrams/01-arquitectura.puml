@@ -1,0 +1,55 @@
+@startuml
+!include style.puml
+title Arquitectura por capas y puntos de mejora
+top to bottom direction
+actor "Consumidor\nweb / curl / k6" as user
+rectangle "Aplicación Spring Boot · puerto 5000" {
+  component "SimilarProductsController\nEntrada HTTP" as controller
+  component "SimilarProductsService\nCoordinación y decisiones" as service
+  component "ProductApiClient\nAcceso a la API externa" as client
+  component "WebClient + pool\nHTTP no bloqueante" as http
+  component "ApiExceptionHandler\nErrores → HTTP" as errors
+  component "Actuator\n/actuator/health" as health
+}
+cloud "API existente\nEn evaluación: simulado" as api
+user --> controller : GET /product/{id}/similar
+controller --> service : similarProducts(id)
+service --> client : similarIds(id)\nproduct(similarId)
+client --> http : Peticiones HTTP
+http --> api : /product/{id}/similarids\n/product/{similarId}
+service ..> errors : Error propagado\npor el flujo reactivo
+errors ..> user : 404 / 502 / 504
+controller ..> user : 200 · array ordenado
+user --> health : GET /actuator/health
+note bottom of service
+  M1 · Responsabilidades separadas e inyección
+  M2 · Hasta 4 detalles simultáneos por petición
+  M3 · Orden, deduplicación y resultados parciales
+  M4 · Plazo global: 8 s
+end note
+note bottom of client
+  M4 · IDs: 2 s; detalle: 6 s
+  Validación de la respuesta externa
+  M5 · Diagnóstico sin registrar cuerpos ni IDs
+  Los WARN se emiten desde el servicio
+end note
+note bottom of http
+  M6 · Pool compartido: máximo 800 conexiones
+  Cola: 1024; espera de adquisición: 1 s
+  Conexión TCP: 1 s; inactividad: 2 s
+end note
+note top of controller
+  Beans singleton por contexto Spring.
+  Una instancia compartida no implica
+  atender las peticiones de una en una.
+end note
+note bottom of health
+  M5 · Salud de la aplicación.
+  No consulta la dependencia.
+end note
+legend bottom
+  M1–M6: mejoras implementadas sobre el endpoint requerido.
+  Sin base de datos ni caché. No hay capas de repositorio.
+  Las pruebas y la ejecución reproducible se explican en los diagramas 05 y 06.
+endlegend
+@enduml

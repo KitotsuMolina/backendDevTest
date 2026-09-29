@@ -1,0 +1,48 @@
+@startuml
+!include style.puml
+title Singleton, estado por petición y límites compartidos
+top to bottom direction
+actor "Petición A" as a
+actor "Petición B" as b
+rectangle "Contexto Spring: instancias compartidas (singleton)" {
+  component "1 Controller" as controller
+  component "1 Service\nSin estado mutable de peticiones" as service
+  component "1 ProductApiClient\n1 WebClient configurado" as client
+  component "1 ConnectionProvider\nPool de conexiones compartido" as pool
+}
+rectangle "Estado de cada suscripción reactiva" {
+  rectangle "Flujo A\nSus IDs y resultados\nHasta 4 detalles activos\nPlazo global: 8 s" as flowA #DCFCE7
+  rectangle "Flujo B\nSus IDs y resultados\nHasta 4 detalles activos\nPlazo global: 8 s" as flowB #DCFCE7
+}
+cloud "Misma API externa" as api
+a --> controller
+b --> controller
+controller --> service : Inyección por constructor
+service ..> flowA : Pipeline independiente
+service ..> flowB : Pipeline independiente
+flowA --> client : Consultar sus detalles
+flowB --> client : Consultar sus detalles
+client --> pool : Adquirir / reutilizar conexión
+pool --> api : Hasta 800 conexiones\nentre todas las peticiones
+note right of pool
+  Si no hay conexión disponible:
+  • Cola limitada a 1024 adquisiciones.
+  • Espera máxima de adquisición: 1 s.
+
+  Si una conexión queda ociosa:
+  • Caduca tras 2 s de inactividad.
+  • Limpieza cada 1 s.
+  • LIFO: preferir la usada más recientemente.
+end note
+note bottom of flowB
+  Los productos de A y B no se guardan
+  en atributos del singleton Service.
+  Cada flujo conserva su propio estado.
+end note
+legend bottom
+  Singleton = una instancia por bean y contexto Spring, no una instancia universal.
+  4 consultas concurrentes NO significa 4 hilos dedicados por petición.
+  800 conexiones NO significa 800 peticiones de usuario ni 800 hilos.
+  Los límites de llamada incluyen la espera de conexión y la lectura del cuerpo.
+endlegend
+@enduml

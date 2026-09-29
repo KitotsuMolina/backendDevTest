@@ -1,0 +1,28 @@
+@startuml
+!include style.puml
+title Cómo las pruebas guiaron las mejoras implementadas
+start
+:Implementar el contrato\nEndpoint, JSON y orden de similitud;
+:Separar Controller / Service / ProductApiClient\nInyección por constructor y responsabilidades claras;
+:Acotar concurrencia y esperas\n4 detalles por petición; 6 s por detalle; 8 s globales;
+:Verificar comportamiento con pruebas\nOrden, vacío, 404, fallos parciales y timeouts;
+:Ejecutar k6 original;
+:Detectar que el script original\nno comprueba contenido ni estados; <<#FFF8DB>>
+:Agregar verificación de respuestas bajo carga\nsin modificar el test original;
+:Pool de 256 conexiones\n98,14 % de checks correctos\n410 fallos de contenido, incluidos 31 de estado; <<#FEE2E2>>
+:Ampliar el pool a 800 conexiones\nMantener los límites por petición y los plazos;
+:Primera repetición: 18 478 checks correctos\nEl contenido esperado se conserva; <<#DCFCE7>>
+:Revisar también registros del script original;
+:Detectar 4 cierres de conexión tras pausas\n3 fallos de IDs y 1 omisión de detalle; <<#FEE2E2>>
+:Retirar conexiones ociosas tras 2 s\nLimpieza cada 1 s; reutilización LIFO;
+:Repetir pruebas, construcción y ambas cargas;
+:Resultado final\n32 pruebas automáticas correctas\n11 502 checks k6 correctos de 11 502\nSin fallos de conexión en las cargas finales; <<#DCFCE7>>
+:Documentar decisiones, comandos y límites\nConservar resúmenes y fuentes para revisión;
+stop
+legend bottom
+  Son ejecuciones locales cortas sobre una máquina compartida.
+  No certifican capacidad de producción ni una mejora general de latencia.
+  No se añadió caché ni una política propia de reintentos.
+  Evidencias: reports/verification.md y sus resúmenes enlazados.
+endlegend
+@enduml

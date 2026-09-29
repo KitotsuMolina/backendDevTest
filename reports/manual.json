@@ -1,0 +1,120 @@
+[
+  {
+    "productId": "1",
+    "status": 200,
+    "seconds": 0.12,
+    "body": [
+      {
+        "id": "2",
+        "name": "Dress",
+        "price": 19.99,
+        "availability": true
+      },
+      {
+        "id": "3",
+        "name": "Blazer",
+        "price": 29.99,
+        "availability": false
+      },
+      {
+        "id": "4",
+        "name": "Boots",
+        "price": 39.99,
+        "availability": true
+      }
+    ]
+  },
+  {
+    "productId": "2",
+    "status": 200,
+    "seconds": 5.01,
+    "body": [
+      {
+        "id": "3",
+        "name": "Blazer",
+        "price": 29.99,
+        "availability": false
+      },
+      {
+        "id": "100",
+        "name": "Trousers",
+        "price": 49.99,
+        "availability": false
+      },
+      {
+        "id": "1000",
+        "name": "Coat",
+        "price": 89.99,
+        "availability": true
+      }
+    ]
+  },
+  {
+    "productId": "3",
+    "status": 200,
+    "seconds": 6.005,
+    "body": [
+      {
+        "id": "100",
+        "name": "Trousers",
+        "price": 49.99,
+        "availability": false
+      },
+      {
+        "id": "1000",
+        "name": "Coat",
+        "price": 89.99,
+        "availability": true
+      }
+    ]
+  },
+  {
+    "productId": "4",
+    "status": 200,
+    "seconds": 0.011,
+    "body": [
+      {
+        "id": "1",
+        "name": "Shirt",
+        "price": 9.99,
+        "availability": true
+      },
+      {
+        "id": "2",
+        "name": "Dress",
+        "price": 19.99,
+        "availability": true
+      }
+    ]
+  },
+  {
+    "productId": "5",
+    "status": 200,
+    "seconds": 0.01,
+    "body": [
+      {
+        "id": "1",
+        "name": "Shirt",
+        "price": 9.99,
+        "availability": true
+      },
+      {
+        "id": "2",
+        "name": "Dress",
+        "price": 19.99,
+        "availability": true
+      }
+    ]
+  },
+  {
+    "productId": "missing",
+    "status": 404,
+    "seconds": 0.009,
+    "body": null
+  },
+  {
+    "health": {
+      "status": "UP"
+    }
+  }
+]

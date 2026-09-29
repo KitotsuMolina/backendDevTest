@@ -1,0 +1,6 @@
+Logs of the final container, both k6 runs, before the final smoke test.
+HTTP_404: 3168
+HTTP_500: 3051
+TimeoutException: 800
+Request failures: 0
+No connection-reset, premature-close or pool-acquisition errors observed.

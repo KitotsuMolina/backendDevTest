@@ -1,0 +1,9 @@
+/target/
+/.m2/
+/.idea/
+*.iml
+/reports/*.log
+
+# Temporary browser diagnostics; retain the Grafana evidence screenshot.
+/output/playwright/*.log
+/output/playwright/*.yml

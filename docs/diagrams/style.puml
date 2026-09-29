@@ -1,0 +1,24 @@
+' Estilo compartido; este archivo no es un diagrama independiente.
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam ArrowColor #334155
+skinparam defaultTextAlignment center
+skinparam noteBackgroundColor #FFF8DB
+skinparam noteBorderColor #B78D24
+skinparam componentStyle rectangle
+skinparam componentBackgroundColor #EFF6FF
+skinparam componentBorderColor #3B638C
+skinparam activityBackgroundColor #EFF6FF
+skinparam activityBorderColor #3B638C
+skinparam activityDiamondBackgroundColor #FFF8DB
+skinparam activityDiamondBorderColor #B78D24
+skinparam sequenceParticipantBackgroundColor #EFF6FF
+skinparam sequenceParticipantBorderColor #3B638C
+skinparam sequenceLifeLineBorderColor #94A3B8
+skinparam titleFontSize 21
+skinparam titleFontColor #16324F
+skinparam footerFontColor #64748B
+footer Nunegal · Solución implementada · Valores por defecto

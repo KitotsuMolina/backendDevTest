@@ -1,0 +1,54 @@
+@startuml
+!include style.puml
+title Flujo de petición y decisiones ante fallos
+start
+partition "Controlador" {
+  :Recibir GET /product/{productId}/similar;
+  :Delegar en SimilarProductsService;
+}
+partition "Servicio + cliente HTTP" {
+  :Consultar /product/{productId}/similarids\nPlazo de llamada: 2 s;
+  note right
+    Desde la suscripción se aplica un plazo global de 8 s.
+    Si vence en CUALQUIER etapa: cancelar trabajo pendiente
+    y devolver 504 sin cuerpo. No se espera al final del flujo.
+  end note
+  if (¿Se obtuvo un array de IDs válido?) then (Sí)
+    :Normalizar cadenas / enteros\ny eliminar duplicados conservando su primera posición;
+  else (No)
+    if (¿Respuesta externa 404?) then (Sí)
+      :Registrar fallo y devolver 404 sin cuerpo; <<#FEE2E2>>
+      stop
+    else (No)
+      if (¿Venció el plazo de la consulta?) then (Sí)
+        :Registrar fallo y devolver 504 sin cuerpo; <<#FEE2E2>>
+        stop
+      else (No)
+        :Registrar fallo y devolver 502 sin cuerpo\nOtro estado HTTP, datos inválidos o fallo de conexión; <<#FEE2E2>>
+        stop
+      endif
+    endif
+  endif
+  if (¿Lista vacía?) then (Sí)
+    :Devolver 200 con []; <<#DCFCE7>>
+    stop
+  else (No)
+    :Consultar los detalles en paralelo\nflatMapSequential · máximo 4 activos por petición;
+    note right
+      Por cada detalle, plazo completo de 6 s:
+      • Válido: conservar el producto.
+      • 404 / otro error / inválido / timeout:
+        registrar la causa y omitirlo.
+      El 404 de un similar no es un 404 del producto consultado.
+    end note
+    :Esperar a que terminen las consultas acotadas\ny reunir los éxitos en el orden de los IDs;
+    :Devolver 200 con el array\nSi fallaron todos los detalles: []; <<#DCFCE7>>
+  endif
+}
+stop
+legend bottom
+  Contrato original: 200 / 404.
+  502 / 504 y la política de resultados parciales son decisiones documentadas.
+  No se consulta el detalle del producto original para comprobar su existencia.
+endlegend
+@enduml

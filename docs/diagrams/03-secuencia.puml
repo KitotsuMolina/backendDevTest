@@ -1,0 +1,48 @@
+@startuml
+!include style.puml
+title Secuencia de éxito: concurrencia sin perder el orden
+autonumber
+actor Consumidor as user
+participant Controller as controller
+participant Service as service
+participant "ProductApiClient\n+ WebClient" as client
+participant "API externa" as api
+user -> controller : GET /product/1/similar
+controller -> service : similarProducts("1")
+note over service,api #FFF8DB
+  Plazo global de la operación: 8 s.
+  Flechas abiertas: solicitudes HTTP asíncronas; no eventos de mensajería.
+end note
+service -> client : similarIds("1")
+client ->> api : GET /product/1/similarids
+api -->> client : 200 · [2, 3, 4]
+client --> service : ["2", "3", "4"]
+note over service
+  Deduplicar IDs sin cambiar su orden.
+  Suscribir detalles concurrentemente: máximo 4.
+end note
+service -> client : product("2")
+client ->> api : GET /product/2
+service -> client : product("3")
+client ->> api : GET /product/3
+service -> client : product("4")
+client ->> api : GET /product/4
+note over client,api
+  Las tres llamadas pueden estar en curso al mismo tiempo.
+  Cada una tiene un plazo de 6 s, incluida la lectura del cuerpo.
+end note
+api -->> client : Detalle 4
+client -->> service : Producto 4 disponible
+note left of service : Guardar hasta poder emitirlo en orden.
+api -->> client : Detalle 2
+client -->> service : Producto 2 disponible
+api -->> client : Detalle 3
+client -->> service : Producto 3 disponible
+service --> controller : Lista [producto 2, producto 3, producto 4]
+controller --> user : 200 application/json
+note over user,api
+  Orden de llegada ilustrativo: 4 → 2 → 3.
+  Orden de respuesta garantizado para los éxitos: 2 → 3 → 4.
+  No se inventa una instantánea transaccional entre productos.
+end note
+@enduml

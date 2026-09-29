@@ -1,0 +1,23 @@
+server:
+  port: ${PORT:5000}
+spring:
+  application:
+    name: similar-products
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+products:
+  base-url: ${PRODUCTS_BASE_URL:http://localhost:3001}
+  concurrency: ${PRODUCTS_CONCURRENCY:4}
+  max-connections: ${PRODUCTS_MAX_CONNECTIONS:800}
+  pending-connections: ${PRODUCTS_PENDING_CONNECTIONS:1024}
+  connect-timeout: ${PRODUCTS_CONNECT_TIMEOUT:1s}
+  acquire-timeout: ${PRODUCTS_ACQUIRE_TIMEOUT:1s}
+  ids-timeout: ${PRODUCTS_IDS_TIMEOUT:2s}
+  detail-timeout: ${PRODUCTS_DETAIL_TIMEOUT:6s}
+  request-timeout: ${PRODUCTS_REQUEST_TIMEOUT:8s}

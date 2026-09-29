@@ -1,0 +1,23 @@
+✓ ordered expected products
+    ✓ status 200
+
+  ✓ checks.....................: 100.00% ✓ 18478 ✗ 0
+    data_received..............: 2.0 MB  31 kB/s
+    data_sent..................: 1.0 MB  16 kB/s
+    http_req_blocked...........: avg=169.59µs min=1.09µs   med=3.26µs   max=23.46ms  p(90)=5.22µs   p(95)=7.72µs
+    http_req_connecting........: avg=56.24µs  min=0s       med=0s       max=21.79ms  p(90)=0s       p(95)=0s
+    http_req_duration..........: avg=695.45ms min=6.88ms   med=196.81ms max=6.25s    p(90)=938.11ms p(95)=5.46s
+    ✓ { scenario:error }.......: avg=254.89ms min=32.52ms  med=233.73ms max=814.44ms p(90)=298.81ms p(95)=510.47ms
+    ✓ { scenario:normal }......: avg=227.59ms min=104.25ms med=140.87ms max=1.07s    p(90)=478.22ms p(95)=926.17ms
+    ✓ { scenario:notFound }....: avg=184.72ms min=6.88ms   med=167.5ms  max=683.09ms p(90)=212.32ms p(95)=331.06ms
+    ✓ { scenario:slow }........: avg=5.3s     min=5.01s    med=5.32s    max=5.5s     p(90)=5.47s    p(95)=5.49s
+    ✓ { scenario:verySlow }....: avg=6.08s    min=6s       med=6.07s    max=6.25s    p(90)=6.2s     p(95)=6.23s
+    http_req_receiving.........: avg=39.43µs  min=11.19µs  med=37.43µs  max=697.31µs p(90)=57.03µs  p(95)=66.17µs
+    http_req_sending...........: avg=20.31µs  min=4.85µs   med=13.01µs  max=13.65ms  p(90)=22.16µs  p(95)=26.4µs
+    http_req_tls_handshaking...: avg=0s       min=0s       med=0s       max=0s       p(90)=0s       p(95)=0s
+    http_req_waiting...........: avg=695.39ms min=6.81ms   med=196.73ms max=6.25s    p(90)=937.65ms p(95)=5.46s
+    http_reqs..................: 9239    145.77375/s
+    iteration_duration.........: avg=1.22s    min=507.21ms med=694.24ms max=6.75s    p(90)=1.49s    p(95)=5.97s
+    iterations.................: 8799    138.831391/s
+    vus........................: 200     min=0   max=200
+    vus_max....................: 200     min=200 max=200
